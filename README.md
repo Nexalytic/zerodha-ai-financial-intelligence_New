@@ -14,12 +14,18 @@ An AI-powered financial intelligence and portfolio analytics platform for Indian
 
 ```text
 Zerodha-AI-Intelligence-New/
-├── backend/          # FastAPI application, database layer, tests
+├── backend/          # FastAPI application, database layer, tests, MCP server
+│   └── docs/         # Feature documentation (e.g., AI_REASONING_ENDPOINT.md)
 ├── frontend/         # React + Vite TypeScript web client
 ├── .gitignore        # Git ignore rules for Python, Node, DBs, and secrets
 └── README.md         # Project documentation
 ```
 
+## Documentation
+
+- [AI Reasoning Endpoint & Architecture](backend/docs/AI_REASONING_ENDPOINT.md)
+
 ## Status
 
-Phase 02: Fresh Project Foundation in progress.
+Phase 06: AI Reasoning Engine — Substep 6.4 (AI Reasoning Service & REST Endpoint) completed.
+
