@@ -8,7 +8,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.v1.router import api_router
 from app.core.config import settings
-from app.core.logging import RequestLoggingMiddleware, logger
+from app.core.logging import RequestLoggingMiddleware, logger, sanitize_log_message
 from app.db.base import Base
 from app.db.session import close_database, engine, ping_database
 from app.schemas.common import ErrorDetail, ErrorEnvelope, build_error_envelope
@@ -94,8 +94,9 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 @app.exception_handler(Exception)
 async def general_exception_handler(request: Request, exc: Exception):
+    sanitized_exc = sanitize_log_message(str(exc))
     logger.error(
-        f"Unhandled server error on {request.method} {request.url.path}: {exc}",
+        f"Unhandled server error on {request.method} {request.url.path}: {sanitized_exc}",
         exc_info=True,
     )
     return JSONResponse(

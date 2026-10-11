@@ -1,6 +1,7 @@
 import logging
 import re
 import time
+import traceback
 from typing import Callable, Optional
 from fastapi import Request, Response
 from fastapi.responses import JSONResponse
@@ -29,12 +30,65 @@ def sanitize_log_message(message: str, secret: Optional[str] = None) -> str:
     sanitized = str(message)
     if secret and len(secret) >= 3:
         sanitized = sanitized.replace(secret, "[REDACTED]")
-    return re.sub(
-        r"(apikey|api_key|key|token|secret|password|auth)=([^&\s'\"]+)",
+    # Redact query parameters and assignments: key=val, api_key=val, etc.
+    sanitized = re.sub(
+        r"(apikey|api_key|api-key|key|token|secret|password|auth)=([^&\s'\"]+)",
         r"\1=[REDACTED]",
         sanitized,
         flags=re.IGNORECASE,
     )
+    # Redact Authorization Bearer header patterns
+    sanitized = re.sub(
+        r"Bearer\s+[a-zA-Z0-9_\-\.]+",
+        "Bearer [REDACTED]",
+        sanitized,
+        flags=re.IGNORECASE,
+    )
+    # Redact Groq API keys if embedded
+    sanitized = re.sub(
+        r"gsk_[a-zA-Z0-9]{20,}",
+        "[REDACTED]",
+        sanitized,
+    )
+    return sanitized
+
+
+class SanitizingLogFilter(logging.Filter):
+    """
+    Logging filter that intercepts all LogRecord instances before emission,
+    sanitizing record messages, arguments, and formatted exception tracebacks.
+    """
+    def filter(self, record: logging.LogRecord) -> bool:
+        if isinstance(record.msg, str):
+            record.msg = sanitize_log_message(record.msg)
+        if record.args:
+            if isinstance(record.args, tuple):
+                record.args = tuple(
+                    sanitize_log_message(str(a)) if isinstance(a, (str, Exception)) else a
+                    for a in record.args
+                )
+            elif isinstance(record.args, dict):
+                record.args = {
+                    k: sanitize_log_message(str(v)) if isinstance(v, (str, Exception)) else v
+                    for k, v in record.args.items()
+                }
+        if record.exc_info and not record.exc_text:
+            try:
+                tb_lines = traceback.format_exception(*record.exc_info)
+                record.exc_text = sanitize_log_message("".join(tb_lines))
+            except Exception:
+                pass
+        elif record.exc_text:
+            record.exc_text = sanitize_log_message(record.exc_text)
+        return True
+
+
+# Attach the sanitizing filter to zerodha_backend and root handlers
+_sanitizing_filter = SanitizingLogFilter()
+logger.addFilter(_sanitizing_filter)
+logging.getLogger().addFilter(_sanitizing_filter)
+for _h in logging.root.handlers:
+    _h.addFilter(_sanitizing_filter)
 
 
 SENSITIVE_HEADERS = {
@@ -83,9 +137,10 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
             return response
         except Exception as exc:
             process_time_ms = (time.perf_counter() - start_time) * 1000.0
+            sanitized_exc = sanitize_log_message(str(exc))
             logger.error(
                 f"<-- Unhandled error in {request.method} {request.url.path} "
-                f"({process_time_ms:.2f}ms): {exc}",
+                f"({process_time_ms:.2f}ms): {sanitized_exc}",
                 exc_info=True,
             )
             return JSONResponse(

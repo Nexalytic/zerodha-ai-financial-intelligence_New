@@ -12,7 +12,11 @@ import { fetchHealth } from '../api/health';
 import { parseApiError, API_BASE_URL } from '../api/client';
 import { HealthResponse, HealthStatusType } from '../types/api';
 
-export const HealthIndicator: React.FC = () => {
+export interface HealthIndicatorProps {
+  refreshTrigger?: number;
+}
+
+export const HealthIndicator: React.FC<HealthIndicatorProps> = ({ refreshTrigger }) => {
   const [status, setStatus] = useState<HealthStatusType>('loading');
   const [healthData, setHealthData] = useState<HealthResponse | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -51,7 +55,7 @@ export const HealthIndicator: React.FC = () => {
 
   useEffect(() => {
     checkHealth();
-  }, [checkHealth]);
+  }, [checkHealth, refreshTrigger]);
 
   return (
     <div
