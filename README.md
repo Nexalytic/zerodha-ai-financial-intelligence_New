@@ -2,7 +2,9 @@
 
 An AI-powered, evidence-grounded financial intelligence and portfolio analytics platform for Indian equity markets (NSE & BSE).
 
-Built with a **strict ₹0 spend policy**, the platform operates completely offline by default using deterministic quantitative models, fixed reference market baselines, rule-based analytics, and local claim-grounding verification.
+The project is designed around a **₹0-cost local demo configuration**, using deterministic quantitative models, reference market baselines, rule-based analytics, and claim-grounding verification. The deployed demonstration uses Groq for AI-generated insights and simulated market data for portfolio analysis.
+
+---
 
 ## 🚀 Live Demo & Project Walkthrough
 
