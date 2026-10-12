@@ -16,10 +16,12 @@ The video demonstrates the application's dashboards, portfolio analytics, AI-gen
 **1. Portfolio Intelligence — AI-Generated Report**
 
 The example below shows a successfully generated AI report with a `VERIFIED GROUNDED` status, using Groq with the `openai/gpt-oss-120b` model.
+![Portfolio AI Report](portfolio-ai-report.png)
 
 **2. Recommendation Review Console — Grounding Validation**
 
 The example below shows the Recommendation Review Console displaying `FACT-GROUNDED VERIFIED`, with 21 out of 21 claims confirmed in that particular report.
+![AI Review Grounding Validation](ai-review-grounding-validation.png)
 
 > **Important limitations:** These screenshots document successful example runs and do not guarantee that every AI report will pass validation. The deployed application uses simulated market data rather than a verified live market feed. The backend is hosted on Render's free tier, which may sleep during inactivity and cause a delay on the first request after waking.
 
