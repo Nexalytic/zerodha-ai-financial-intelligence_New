@@ -4,6 +4,25 @@ An AI-powered, evidence-grounded financial intelligence and portfolio analytics 
 
 Built with a **strict ₹0 spend policy**, the platform operates completely offline by default using deterministic quantitative models, fixed reference market baselines, rule-based analytics, and local claim-grounding verification.
 
+## 🚀 Live Demo & Project Walkthrough
+
+- **Live Application:** [Launch Zerodha AI Financial Intelligence Platform](https://stirring-dusk-7f4ed6.netlify.app/)
+- **Project Demonstration Video:** [Watch the 10–15 Minute Walkthrough on Google Drive](https://drive.google.com/file/d/10A3qNTNxzyu5v3NI0r-qU3P2uRpOUjzz/view?usp=sharing)
+
+The video demonstrates the application's dashboards, portfolio analytics, AI-generated reports, grounding validation, and operational features.
+
+### AI Demonstration Screenshots
+
+**1. Portfolio Intelligence — AI-Generated Report**
+
+The example below shows a successfully generated AI report with a `VERIFIED GROUNDED` status, using Groq with the `openai/gpt-oss-120b` model.
+
+**2. Recommendation Review Console — Grounding Validation**
+
+The example below shows the Recommendation Review Console displaying `FACT-GROUNDED VERIFIED`, with 21 out of 21 claims confirmed in that particular report.
+
+> **Important limitations:** These screenshots document successful example runs and do not guarantee that every AI report will pass validation. The deployed application uses simulated market data rather than a verified live market feed. The backend is hosted on Render's free tier, which may sleep during inactivity and cause a delay on the first request after waking.
+
 ---
 
 ## 1. Architecture Overview & Technology Stack
